@@ -1,19 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProfileCard } from "@/components/public/profile-card";
 import {
   Building2,
   GraduationCap,
   Landmark,
   BarChart3,
-  Users,
-  ClipboardList,
-  Plane,
   Hotel,
-  BookOpen,
-  TrendingUp,
-  CalendarDays,
+  Plane,
   FileText,
+  TrendingUp,
+  BookOpen,
   DollarSign,
   Wifi,
+  ClipboardList,
+  CalendarDays,
   MapPin,
   Database,
 } from "lucide-react";
@@ -70,10 +69,9 @@ export default function QuienesSomosPage() {
         className="relative text-white py-24 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/images/quienesomos.jpg')" }}
       >
-        
-        <div className="container mx-auto px-4 flex flex-col items-center">
-          <h1 className="bg-[#006557] w-fit py-2 px-4 text-4xl font-bold">Observatorio Turístico de Tucumán</h1>
-          <p className="text-lg text-white bg-amber-500 py-2 text-center px-4 mt-0 w-fit">
+          <div className="relative container mx-auto px-4 flex flex-col items-center">
+          <h1 className="text-4xl font-bold rounded-md bg-brand w-fit px-4 py-1">Observatorio Turístico de Tucumán</h1>
+          <p className="text-lg text-white text-center bg-[#EA7220] px-4 py-1 mt-1 w-fit rounded-md">
             Datos estadísticos confiables sobre el comportamiento y las tendencias del sector turístico.
           </p>
         </div>
@@ -82,7 +80,7 @@ export default function QuienesSomosPage() {
       {/* Presentación */}
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-3xl text-center">
-          <p className="text-lg leading-relaxed text-muted-foreground">
+          <p className="text-[15px] leading-relaxed text-muted-foreground">
             En la actualidad, resulta de vital importancia el acceder a estadísticas confiables que
             ofrezcan a destinatarios tanto públicos como privados información sobre el comportamiento y
             las tendencias del sector turístico. Con este objetivo es que, en&nbsp;2016, el Ente Tucumán
@@ -95,27 +93,19 @@ export default function QuienesSomosPage() {
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-2">¿Quiénes lo integran?</h2>
-          <p className="text-center text-muted-foreground mb-10 max-w-xl mx-auto">
+          <p className="text-center text-muted-foreground text-[13px] mb-10 max-w-xl mx-auto">
             El Observatorio Turístico es un espacio de trabajo interinstitucional.
           </p>
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             {integrantes.map((item) => (
-              <Card key={item.nombre} className="border-l-4 border-l-[#006e66]">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#006e66]/10 text-[#006e66]">
-                      <item.icon className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">{item.nombre}</CardTitle>
-                      <p className="text-sm font-medium text-[#e9721f]">{item.rol}</p>
-                    </div>
+              <ProfileCard key={item.nombre} title={item.nombre} subtitle={item.rol} accent="teal">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#006e66]/10">
+                    <item.icon className="h-4 w-4 text-[#006e66]" />
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{item.descripcion}</p>
-                </CardContent>
-              </Card>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">{item.descripcion}</p>
+                </div>
+              </ProfileCard>
             ))}
           </div>
         </div>
@@ -125,19 +115,19 @@ export default function QuienesSomosPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-2">¿Cuáles son sus funciones?</h2>
-          <p className="text-center text-muted-foreground mb-10 max-w-xl mx-auto">
+          <p className="text-center text-muted-foreground text-[13px] mb-10 max-w-xl mx-auto">
             El Observatorio Turístico realiza los siguientes estudios y operativos.
           </p>
-          <div className="grid gap-4 md:grid-cols-3  mx-auto">
+          <div className="grid gap-4 md:grid-cols-3 mx-auto max-w-4xl">
             {funciones.map((f) => (
               <div
                 key={f.text}
-                className="flex items-start gap-3 rounded-lg border bg-white p-4 shadow-sm"
+                className="flex items-start gap-3 rounded-[12px] bg-card p-4"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#223468]/10 text-[#223468]">
-                  <f.icon className="h-4 w-4" />
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#223468]/10">
+                  <f.icon className="h-4 w-4 text-[#223468]" />
                 </div>
-                <p className="text-sm leading-relaxed">{f.text}</p>
+                <p className="text-[13px] leading-relaxed">{f.text}</p>
               </div>
             ))}
           </div>

@@ -34,13 +34,13 @@ export function HeroSlider() {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(next, 3000);
+    const timer = setInterval(next, 5000);
     return () => clearInterval(timer);
   }, [next]);
 
   return (
-    <section className="relative w-full h-[420px] overflow-hidden">
-      {/* Capa de imágenes - ancho completo */}
+    <section className="relative w-full h-[480px] overflow-hidden">
+      {/* Images */}
       {slides.map((slide, i) => (
         <div
           key={slide.src}
@@ -55,35 +55,30 @@ export function HeroSlider() {
             className="object-cover"
             priority={i === 0}
           />
-          
         </div>
       ))}
 
-      {/* Degradado completo para contraste de texto y controles */}
-      <div
-        className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/50 via-black/10 to-black/0"
-      />
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#006e66]/80 via-[#006e66]/30 to-transparent" />
 
-      <div className="absolute inset-0 z-20">
-        <div className="mx-auto container h-full flex items-end justify-between p-8 md:p-12">
-          {/* Texto - izquierda */}
-          <div className="text-white">
-            <h2 className="bg-[#006557] w-fit py-2 px-4 text-3xl md:text-4xl font-bold drop-shadow-sm">
-              {slides[current].title}
-            </h2>
-            <p className="bg-amber-500 py-2 px-4 mt-0 text-lg text-white/90 drop-shadow-sm">
-              {slides[current].text}
-            </p>
-          </div>
+      {/* Content */}
+      <div className="absolute inset-0 z-20 flex items-end">
+        <div className="container mx-auto px-4 pb-12 md:pb-16">
+          <h2 className="bg-brand w-fit px-4 py-1 text-3xl md:text-4xl font-bold text-white drop-shadow-sm rounded-md">
+            {slides[current].title}
+          </h2>
+          <p className="text-[15px] bg-[#EA7220] px-4 py-1 mt-1 w-fit text-white rounded-md">
+            {slides[current].text}
+          </p>
 
-          {/* Indicadores - derecha */}
-          <div className="flex gap-2 pb-2">
+          {/* Indicators */}
+          <div className="flex gap-2 mt-6">
             {slides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  i === current ? "w-6 bg-[#006557]" : "w-2 bg-amber-500"
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === current ? "w-8 bg-brand" : "w-1.5 bg-[#EA7220]"
                 }`}
                 aria-label={`Ir al slide ${i + 1}`}
               />

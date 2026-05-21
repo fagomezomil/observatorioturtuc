@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Observatorio Turístico Tucumán
 
-## Getting Started
+Plataforma web para la carga y visualización de datos del Observatorio Turístico del Ente Tucumán Turismo. Permite gestionar indicadores turísticos por destino y periodo, y publicar balances estadísticos de acceso público.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework**: Next.js 16 (App Router)
+- **Estilos**: Tailwind CSS v4 + shadcn/ui (Base UI)
+- **Base de datos**: PostgreSQL (Supabase) con Prisma 5
+- **Autenticación**: Auth.js v5 (credentials provider, bcryptjs)
+- **Gráficos**: Chart.js + react-chartjs-2 + Recharts
+- **Deploy**: Vercel
+
+## Colores institucionales
+
+| Uso        | Color   |
+| ---------- | ------- |
+| Primario   | #006e66 |
+| Secundario | #e9721f |
+| Acento     | #223468 |
+
+## Roles
+
+| Rol    | Permisos                         |
+| ------ | -------------------------------- |
+| ADMIN  | CRUD datos + gestión de usuarios |
+| EDITOR | CRUD datos                       |
+| VIEWER | Solo lectura pública             |
+
+## Estructura principal
+
+```
+src/
+├── app/
+│   ├── (public)/                        # Sitio público
+│   │   ├── page.tsx                     # Home
+│   │   ├── balance/[periodo]/page.tsx    # Balance por periodo
+│   │   └── quienes-somos/page.tsx       # Quiénes somos
+│   ├── admin/                           # Panel de gestión (protegido)
+│   │   ├── destinos/                    # ABM destinos
+│   │   ├── periodos/                    # ABM periodos
+│   │   ├── usuarios/                    # ABM usuarios (ADMIN)
+│   │   ├── ocupacion/                   # Ocupación hotelera
+│   │   ├── perfil/                      # Perfil del turista
+│   │   ├── procedencia/                 # Procedencia
+│   │   ├── motivos/                     # Motivos de viaje
+│   │   ├── rangos-edad/                # Rangos etarios
+│   │   ├── info-previa/                # Información previa
+│   │   ├── sitios/                      # Sitios consultados
+│   │   ├── compania/                    # Compañía de viaje
+│   │   ├── anticipacion/               # Anticipación de viaje
+│   │   ├── estadia/                     # Estadía promedio
+│   │   ├── gasto/                       # Gasto promedio
+│   │   ├── actividades/                 # Actividades realizadas
+│   │   ├── movimiento/                 # Movimiento de turistas
+│   │   ├── pernoctes/                  # Pernoctes extrahoteleros
+│   │   ├── impacto/                     # Impacto económico
+│   │   └── notas/                       # Notas metodológicas
+│   ├── login/page.tsx
+│   └── register/page.tsx
+├── components/
+│   └── public/                          # Componentes del sitio público
+├── lib/
+│   ├── auth.ts                          # Configuración Auth.js
+│   ├── prisma.ts                        # Cliente Prisma
+│   ├── charts.ts                        # Configuración de Chart.js
+│   ├── evolution-data.ts               # Datos de evolución temporal
+│   └── actions/                         # Server actions
+│       ├── auth.ts
+│       ├── datos.ts
+│       ├── destinos.ts
+│       ├── periodos.ts
+│       └── usuarios.ts
+└── prisma/
+    ├── schema.prisma
+    └── seed.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Modelo de datos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+16 entidades de dominio organizadas por **Destino** + **Periodo**:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+OcupaciónHotelera, PerfilTurista, Procedencia, MotivoViaje, RangoEdad, InfoPrevia, SitioConsultado, CompaniaViaje, AnticipacionViaje, EstadiaPromedio, GastoPromedio, Actividad, MovimientoTurista, PernocteExtraHotelero, ImpactoEconomico, NotaMetodologica
 
-## Learn More
+La mayoría de los campos son nullable, ya que no todos los balances contienen todos los datos.
 
-To learn more about Next.js, take a look at the following resources:
+## Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Instalar dependencias
+npm install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Configurar variables de entorno
+cp .env.example .env
 
-## Deploy on Vercel
+# Generar cliente Prisma
+npx prisma generate
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Ejecutar migraciones
+npx prisma db push
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Seed de datos iniciales
+npx prisma db seed
+
+# Iniciar desarrollo
+npm run dev
+```
+
+## Variables de entorno
+
+```env
+DATABASE_URL=             # PostgreSQL connection string
+AUTH_SECRET=              # Secret para Auth.js
+NEXTAUTH_URL=             # URL base de la app
+```
+
+## Notas técnicas
+
+- shadcn/ui v4 usa `@base-ui/react` (no Radix). Los componentes no soportan `asChild`; usan prop `render` en su lugar.
+- `Select` usa `onValueChange` con tipo `(value: string | null, eventDetails) => void`.

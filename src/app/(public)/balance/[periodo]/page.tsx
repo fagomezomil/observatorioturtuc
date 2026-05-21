@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BalanceContent } from "@/components/public/balance-content";
 
@@ -64,15 +63,18 @@ export default async function BalancePage({ params }: BalancePageProps) {
   return (
     <>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#006e66] to-[#223468] text-white pt-6">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="bg-[#006557] w-fit py-2 px-4 text-3xl font-bold">Balance {periodo.nombre}</h1>
-          <p className="bg-amber-500 py-2 px-4 mt-0 w-fit text-white">Datos del Observatorio Turistico de Tucuman</p>
+      <section className="relative overflow-hidden bg-gradient-to-r from-[#006e66] to-[#223468] text-white py-12">
+        <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5" />
+        <div className="relative container mx-auto px-4 text-center">
+          <h1 className="text-4xl font-bold rounded-md bg-brand w-fit px-4 py-1">Balance {periodo.nombre}</h1>
+          <p className="text-[15px] text-white bg-[#EA7220] px-4 py-1 mt-1 w-fit rounded-md">
+            Datos del Observatorio Turístico de Tucumán
+          </p>
         </div>
       </section>
 
       {/* Content */}
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 container mx-auto px-4 py-4">
         <BalanceContent
           periodo={periodo}
           periodos={allPeriodos}

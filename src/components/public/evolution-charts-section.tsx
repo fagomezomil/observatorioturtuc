@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartCard } from "@/components/public/chart-card";
 import { LineChartComponent } from "@/components/charts/line-chart";
-import { StatCard } from "@/components/public/stat-card";
-import { Users, DollarSign, Bed, TrendingUp } from "lucide-react";
+import { BarChartComponent } from "@/components/charts/bar-chart";
+import { StatMetric } from "@/components/public/stat-metric";
+import { EmptyState } from "@/components/public/empty-state";
+import { Users, DollarSign, Bed, TrendingUp, Search } from "lucide-react";
 import type { EvolutionChartData } from "@/lib/evolution-data";
 
 type Indicator = "impacto" | "turistas" | "gasto" | "procedencia";
@@ -65,7 +67,6 @@ export function EvolutionChartsSection(props: EvolutionChartsSectionProps) {
 
   const periodos = season === "Verano" ? props.veranoPeriodos : props.inviernoPeriodos;
 
-  // When season changes, reset year to latest
   useEffect(() => {
     setSelectedAnio(periodos.length > 0 ? periodos[0].anio : null);
   }, [season, periodos.length]);
@@ -80,6 +81,16 @@ export function EvolutionChartsSection(props: EvolutionChartsSectionProps) {
   const chartData = seasonData[indicator];
   const hasChartData = chartData.datasets.some((ds) => ds.data.some((v) => v !== null));
 
+  const isProcedencia = indicator === "procedencia";
+  const procedenciaBarData = isProcedencia && selectedAnio ? (() => {
+    const yearIdx = chartData.labels.indexOf(String(selectedAnio));
+    if (yearIdx === -1) return null;
+    return {
+      labels: chartData.datasets.map((ds) => ds.label),
+      datasets: [{ label: "% Procedencia", data: chartData.datasets.map((ds) => ds.data[yearIdx] ?? 0) }],
+    };
+  })() : null;
+
   const fmtCurrency = (v: number) =>
     new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(v);
 
@@ -89,36 +100,38 @@ export function EvolutionChartsSection(props: EvolutionChartsSectionProps) {
         <h2 className="text-2xl font-bold text-center mb-4">
           Evolución Temporal
         </h2>
-        <p className="text-center text-muted-foreground mb-6">
+        <p className="text-center text-muted-foreground mb-8 text-[13px]">
           Compare los indicadores turísticos a lo largo de los años
         </p>
 
         <div className="flex flex-wrap justify-center items-center gap-3 mb-8">
-          <button
-            onClick={() => setSeason("Verano")}
-            className={`rounded-full px-6 py-2 text-sm font-medium transition-colors ${
-              season === "Verano"
-                ? "bg-primary text-white"
-                : "bg-white text-muted-foreground border border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            Verano
-          </button>
-          <button
-            onClick={() => setSeason("Invierno")}
-            className={`rounded-full px-6 py-2 text-sm font-medium transition-colors ${
-              season === "Invierno"
-                ? "bg-primary text-white"
-                : "bg-white text-muted-foreground border border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            Invierno
-          </button>
+          <div className="inline-flex rounded-[8px] border border-border bg-card p-1">
+            <button
+              onClick={() => setSeason("Verano")}
+              className={`rounded-md px-5 py-1.5 text-sm font-medium transition-colors ${
+                season === "Verano"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Verano
+            </button>
+            <button
+              onClick={() => setSeason("Invierno")}
+              className={`rounded-md px-5 py-1.5 text-sm font-medium transition-colors ${
+                season === "Invierno"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Invierno
+            </button>
+          </div>
 
           <select
             value={indicator}
             onChange={(e) => setIndicator(e.target.value as Indicator)}
-            className="rounded-full border border-input bg-background px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+            className="rounded-[8px] border border-border bg-card px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {indicators.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -131,7 +144,7 @@ export function EvolutionChartsSection(props: EvolutionChartsSectionProps) {
             <select
               value={selectedAnio ?? ""}
               onChange={(e) => setSelectedAnio(Number(e.target.value))}
-              className="rounded-full border border-input bg-background px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+              className="rounded-[8px] border border-border bg-card px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
             >
               {periodos.map((p) => (
                 <option key={p.id} value={p.anio}>
@@ -142,66 +155,73 @@ export function EvolutionChartsSection(props: EvolutionChartsSectionProps) {
           )}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-4">
+        <div className="grid gap-5 lg:grid-cols-4">
           {/* Chart — 3/4 width on desktop */}
           <div className="min-w-0 lg:col-span-3 my-auto">
-            {hasChartData && (
-              <Card className="h-full">
-                {/* <CardHeader>
-                  <CardTitle>{indicators.find((i) => i.value === indicator)?.label}</CardTitle>
-                </CardHeader> */}
-                <CardContent>
-                  <div style={{ position: "relative", height: "550px", width: "100%" }}>
-                    <LineChartComponent
-                      labels={chartData.labels}
-                      datasets={chartData.datasets}
-                      title={titleMap[indicator][season]}
-                      unit={unitMap[indicator]}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+            {hasChartData && isProcedencia && procedenciaBarData && (
+              <ChartCard height="lg">
+                <BarChartComponent
+                  labels={procedenciaBarData.labels}
+                  datasets={procedenciaBarData.datasets}
+                  title={titleMap[indicator][season]}
+                  unit="%"
+                  horizontal
+                />
+              </ChartCard>
+            )}
+            {hasChartData && !isProcedencia && (
+              <ChartCard height="lg">
+                <LineChartComponent
+                  labels={chartData.labels}
+                  datasets={chartData.datasets}
+                  title={titleMap[indicator][season]}
+                  unit={unitMap[indicator]}
+                />
+              </ChartCard>
             )}
             {!hasChartData && (
-              <p className="text-center text-muted-foreground py-12">
-                No hay datos disponibles para esta combinación.
-              </p>
+              <EmptyState
+                icon={Search}
+                title="Sin datos disponibles"
+                description="No hay datos para esta combinación de temporada e indicador."
+              />
             )}
           </div>
 
           {/* Stats — 1/4 width on desktop */}
-          <div className="flex flex-col min-w-0">
+          <div className="flex flex-col min-w-0 lg:self-stretch gap-4">
             {stats && (
               <>
-                <p className="text-sm font-semibold text-white text-center lg:text-left mb-3 rounded-md bg-brand px-4 py-2">
+                <div className="rounded-[8px] bg-[#006e66] px-4 py-2 text-sm font-semibold text-white text-center lg:text-left">
                   {stats.nombre}
-                </p>
-                <div className="flex-1 flex flex-col gap-3">
-                  <StatCard
-                    icon={Users}
-                    value={stats.turistas > 0 ? stats.turistas.toLocaleString("es-AR") : "—"}
-                    label="Turistas registrados"
-                    className="flex-1"
-                  />
-                  <StatCard
-                    icon={DollarSign}
-                    value={stats.impacto > 0 ? fmtCurrency(stats.impacto) : "—"}
-                    label="Impacto económico"
-                    className="flex-1"
-                  />
-                  <StatCard
-                    icon={Bed}
-                    value={stats.ocupacion > 0 ? `${stats.ocupacion.toFixed(0)}%` : "—"}
-                    label="Ocupación promedio"
-                    className="flex-1"
-                  />
-                  <StatCard
-                    icon={TrendingUp}
-                    value={stats.gasto > 0 ? fmtCurrency(Math.round(stats.gasto)) : "—"}
-                    label="Gasto diario promedio"
-                    className="flex-1"
-                  />
                 </div>
+                <StatMetric
+                  value={stats.turistas > 0 ? stats.turistas.toLocaleString("es-AR") : "—"}
+                  label="Turistas registrados"
+                  icon={Users}
+                  accentColor="teal"
+                  className="flex-1"
+                />
+                <StatMetric
+                  value={stats.impacto > 0 ? fmtCurrency(stats.impacto) : "—"}
+                  label="Impacto económico"
+                  icon={DollarSign}
+                  accentColor="navy"
+                  className="flex-1"
+                />
+                <StatMetric
+                  value={stats.ocupacion > 0 ? `${stats.ocupacion.toFixed(0)}%` : "—"}
+                  label="Ocupación promedio"
+                  icon={Bed}
+                  className="flex-1"
+                />
+                <StatMetric
+                  value={stats.gasto > 0 ? fmtCurrency(Math.round(stats.gasto)) : "—"}
+                  label="Gasto diario promedio"
+                  icon={TrendingUp}
+                  accentColor="orange"
+                  className="flex-1"
+                />
               </>
             )}
           </div>

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, MapPin, Calendar } from "lucide-react";
+import { MapPin, BarChart3, Calendar } from "lucide-react";
 import { HeroSlider } from "@/components/public/hero-slider";
 import { EvolutionChartsSection } from "@/components/public/evolution-charts-section";
+import { FeatureCard } from "@/components/public/feature-card";
+import { LinkCard } from "@/components/public/link-card";
 import { shapeImpactoEconomico, shapeDestinoMetric, shapeMovimientoTurista, shapeProcedencia } from "@/lib/evolution-data";
 
 export const revalidate = 3600;
@@ -111,44 +112,27 @@ export default async function HomePage() {
   return (
     <div>
       <HeroSlider />
+
       {/* Quick info */}
-      <section className="py-16 bg-white">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-8">¿Qué encontrás en este sitio?</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader className="text-center">
-                <MapPin className="h-8 w-8 mx-auto mb-2 text-primary" />
-                <CardTitle className="text-lg">Perfil del Turista</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-sm text-muted-foreground">
-                  Procedencia, motivo de viaje, rango etario, compañía de viaje y más
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="text-center">
-                <BarChart3 className="h-8 w-8 mx-auto mb-2 text-primary" />
-                <CardTitle className="text-lg">Gasto y Economía</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-sm text-muted-foreground">
-                  Gasto promedio diario, distribución del gasto, impacto económico y estadía
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="text-center">
-                <Calendar className="h-8 w-8 mx-auto mb-2 text-primary" />
-                <CardTitle className="text-lg">Ocupación y Movimiento</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-sm text-muted-foreground">
-                  Ocupación hotelera, movimiento de turistas, pernoctaciones
-                </p>
-              </CardContent>
-            </Card>
+            <FeatureCard
+              icon={MapPin}
+              title="Perfil del Turista"
+              description="Procedencia, motivo de viaje, rango etario, compañía de viaje y más"
+            />
+            <FeatureCard
+              icon={BarChart3}
+              title="Gasto y Economía"
+              description="Gasto promedio diario, distribución del gasto, impacto económico y estadía"
+            />
+            <FeatureCard
+              icon={Calendar}
+              title="Ocupación y Movimiento"
+              description="Ocupación hotelera, movimiento de turistas, pernoctaciones"
+            />
           </div>
         </div>
       </section>
@@ -172,25 +156,17 @@ export default async function HomePage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-8">Balances Disponibles</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {allPeriodos.map((p) => {
               const slug = p.nombre.toLowerCase().replace(/\s+/g, "-");
               return (
-                <Link key={p.id} href={`/balance/${slug}`}>
-                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-l-[#006e66]">
-                    <CardHeader>
-                      <div className="flex items-center gap-3">
-                        <Calendar className="h-5 w-5 text-[#006e66]" />
-                        <CardTitle className="text-lg">{p.nombre}</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        {p.temporada === "Verano" ? "Enero - Febrero" : "Julio"} {p.anio}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
+                <LinkCard
+                  key={p.id}
+                  href={`/balance/${slug}`}
+                  icon={Calendar}
+                  title={p.nombre}
+                  description={`${p.temporada === "Verano" ? "Enero - Febrero" : "Julio"} ${p.anio}`}
+                />
               );
             })}
           </div>

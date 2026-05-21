@@ -25,19 +25,20 @@ ChartJS.register(
   Filler
 );
 
+/* Domain-derived palette — colors from Tucuman's landscape, not generic */
 export const chartColors = {
-  primary: "#006e66",
-  secondary: "#e9721f",
-  accent: "#223468",
-  light: "#85bd77",
-  red: "#e30612",
-  gray: "#73716a",
+  primary: "#006e66",   // Yungas teal
+  secondary: "#e9721f", // Terracotta sun
+  accent: "#223468",    // Mountain sky
+  light: "#85bd77",     // Spring green
+  earth: "#D4A574",    // Adobe earth
+  red: "#e30612",       // Alert coral
+  gray: "#73716a",      // Warm stone
 };
 
 export const fullPalette = [
-  "#006e66", "#e9721f", "#223468", "#85bd77", "#e30612",
-  "#73716a", "#4a90d9", "#f5a623", "#7ed321", "#bd10e0",
-  "#50C8C6", "#D4A574", "#8B5CF6", "#EAB308",
+  "#006e66", "#e9721f", "#223468", "#85bd77", "#D4A574",
+  "#73716a", "#4a90d9", "#f5a623", "#e30612", "#50C8C6",
 ];
 
 export const defaultChartOptions = {
