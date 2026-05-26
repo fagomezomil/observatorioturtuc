@@ -45,3 +45,6 @@ next-env.d.ts
 .interface-design/
 AGENTS.md
 CLAUDE.md
+
+# prisma (datos locales, no se sube al repo)
+prisma/
